@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#101426">
 <title>Bookmoth</title>
-<script>try{var BV=2,s=localStorage.getItem('bm-html'),t=+localStorage.getItem('bm-try')||0;if(s&&!window.__bm){var m=s.match(/const BM_V=(\d+)/),v=m?+m[1]:0;if(t>=2){localStorage.removeItem('bm-html');localStorage.setItem('bm-try','0')}else if(v>BV){window.__bm=1;localStorage.setItem('bm-try',String(t+1));document.open();document.write(s);document.close()}}}catch(e){}</script>
+<script>try{var BV=3,s=localStorage.getItem('bm-html'),t=+localStorage.getItem('bm-try')||0;if(s&&!window.__bm){var m=s.match(/const BM_V=(\d+)/),v=m?+m[1]:0;if(t>=2){localStorage.removeItem('bm-html');localStorage.setItem('bm-try','0')}else if(v>BV){window.__bm=1;localStorage.setItem('bm-try',String(t+1));document.open();document.write(s);document.close()}}}catch(e){}</script>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700&family=Newsreader:ital,wght@0,400;0,500;1,400&display=swap">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jsQR/1.4.0/jsQR.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
@@ -59,13 +59,18 @@ nav .sc{width:62px;height:62px;border-radius:50%;background:var(--glow);color:#1
 #txt p{margin-bottom:1em}
 .book{-webkit-touch-callout:none;user-select:none;-webkit-user-select:none}.chips{display:flex;gap:8px;overflow-x:auto;padding-bottom:10px}.chip{padding:7px 14px;border-radius:99px;border:1px solid var(--ln);white-space:nowrap}.chip.on{background:var(--ac);color:var(--on);border-color:var(--ac)}.sh{position:fixed;inset:0;background:rgba(0,0,0,.5);display:flex;align-items:flex-end;justify-content:center;z-index:20}.sh[hidden]{display:none}.pn{background:var(--sf);width:100%;max-width:560px;border-radius:22px 22px 0 0;padding:18px 18px calc(18px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:8px}.pn h3{font-size:18px;margin-bottom:4px}.mi{text-align:left;padding:14px 16px;border-radius:14px;border:1px solid var(--ln);font-weight:500}.mi.cur{border-color:var(--ac);color:var(--ac)}.mi.dg{color:#E5484D;border-color:#E5484D}
 .ub{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:6px 18px 0;padding:10px 14px;border-radius:16px;background:var(--glow);color:#101426;font-weight:700}.ub[hidden]{display:none}.ub .btn{padding:8px 16px;background:#101426;color:#FFC857}
+.set{margin:16px 0 24px}.set b{display:block;margin-bottom:8px}.seg{display:flex;gap:6px;flex-wrap:wrap}.seg button{padding:9px 16px;border-radius:99px;border:1px solid var(--ln)}.seg button.on{background:var(--ac);color:var(--on);border-color:var(--ac)}
+body.fl nav{background:none;border:0;padding:0 20px calc(14px + env(safe-area-inset-bottom,0px));pointer-events:none}
+body.fl nav button{pointer-events:auto;width:58px;height:58px;border-radius:50%;background:var(--sf);border:1px solid var(--ln);box-shadow:0 6px 18px rgba(0,0,0,.28);padding:0;justify-content:center;font-size:0}
+body.fl nav button.on:not(.sc){border-color:var(--ac)}
+body.fl nav button.sc{background:var(--glow);color:#101426;width:68px;height:68px;margin-top:0;box-shadow:0 0 22px var(--glow);border:0}
 .toast{position:fixed;left:50%;bottom:110px;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 18px;border-radius:99px;opacity:0;transition:opacity .25s;pointer-events:none;z-index:9}
 .toast.on{opacity:1}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 </head>
 <body>
-<header><h1>Book<span>moth</span></h1><button class="ic" id="up" aria-label="Check for updates" style="margin-left:auto;margin-right:8px"><svg viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-3-6.7L21 8M21 3v5h-5"/></svg></button><button class="ic" id="th" aria-label="Switch light or dark mode"><svg viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg></button></header>
+<header><h1>Book<span>moth</span></h1><button class="ic" id="up" aria-label="Settings" style="margin-left:auto;margin-right:8px"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button><button class="ic" id="th" aria-label="Switch light or dark mode"><svg viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg></button></header>
 <div class="ub" id="ub" hidden><span id="ut"></span><button class="btn" id="ud">Update now</button></div>
 <main>
 <section id="s-lib" class="on"><h2>Your shelf</h2><div class="chips" id="ch"></div><p class="mu" id="hn" style="margin-bottom:10px"></p><div id="lib" class="grid"></div></section>
@@ -80,6 +85,11 @@ nav .sc{width:62px;height:62px;border-radius:50%;background:var(--glow);color:#1
 <input type="search" id="q" placeholder="Title or author" aria-label="Book title or author">
 <div class="row"><button class="btn" id="fs">Search nearby</button></div>
 <div id="nr"></div></section>
+<section id="s-set"><h2>Settings</h2>
+<div class="set"><b>Theme</b><div class="seg" id="sg-th"><button data-v="auto">Match phone</button><button data-v="light">Light</button><button data-v="dark">Dark</button></div></div>
+<div class="set"><b>Bottom buttons</b><div class="seg" id="sg-nv"><button data-v="bar">One bar</button><button data-v="float">Separate buttons</button></div><p class="mu" style="margin-top:8px">Separate buttons gives the shelf, scanner and location icons their own round buttons.</p></div>
+<div class="set"><b>About Bookmoth</b><p class="mu" id="ver" style="margin-bottom:10px"></p><button class="btn o" id="cu">Check for updates</button></div>
+<div class="row"><button class="btn" id="sd">Done</button></div></section>
 </main>
 <div id="rd"><div class="tb"><button class="ic" id="bk" aria-label="Back to shelf"><svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg></button><b id="rt"></b><button class="ic" id="fm" aria-label="Smaller text">A−</button><button class="ic" id="fp" aria-label="Larger text">A+</button></div><div id="txt"></div></div>
 <nav>
@@ -90,7 +100,7 @@ nav .sc{width:62px;height:62px;border-radius:50%;background:var(--glow);color:#1
 <div class="sh" id="sh" hidden><div class="pn" id="pn"></div></div>
 <div class="toast" id="ts"></div>
 <script>
-const BM_V=2,UPD='https://raw.githubusercontent.com/fjking750/Bookmoth-/main/index.html';
+const BM_V=3,UPD='https://raw.githubusercontent.com/fjking750/Bookmoth-/main/index.html';
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const SAMPLES=[
 {i:'9780141439518',t:'Pride and Prejudice',a:'Jane Austen',x:'It is a truth universally acknowledged, that a single man in possession of a good fortune, must be in want of a wife.\n\nHowever little known the feelings or views of such a man may be on his first entering a neighbourhood, this truth is so well fixed in the minds of the surrounding families, that he is considered the rightful property of some one or other of their daughters.'},
@@ -178,7 +188,12 @@ navigator.geolocation.getCurrentPosition(p=>nearby(q,{lat:p.coords.latitude.toFi
 $('#th').onclick=()=>{const r=document.documentElement,dk=r.dataset.theme?r.dataset.theme==='dark':matchMedia('(prefers-color-scheme:dark)').matches;r.dataset.theme=dk?'light':'dark';try{localStorage.setItem('bm-th',r.dataset.theme)}catch{}};
 try{const t=localStorage.getItem('bm-th');if(t)document.documentElement.dataset.theme=t}catch{}
 render();
-$('#up').onclick=()=>checkUpdate(1);
+function seg(id,g,s){const el=$(id),mk=()=>el.querySelectorAll('button').forEach(b=>b.classList.toggle('on',b.dataset.v===g()));el.querySelectorAll('button').forEach(b=>b.onclick=()=>{s(b.dataset.v);mk()});mk();return mk}
+const RT=document.documentElement;let navS=ld('bm-nav','bar');document.body.classList.toggle('fl',navS==='float');
+const m1=seg('#sg-th',()=>RT.dataset.theme||'auto',v=>{try{if(v==='auto'){delete RT.dataset.theme;localStorage.removeItem('bm-th')}else{RT.dataset.theme=v;localStorage.setItem('bm-th',v)}}catch{}});
+seg('#sg-nv',()=>navS,v=>{navS=v;document.body.classList.toggle('fl',v==='float');sv('bm-nav',v)});
+$('#ver').textContent='Version '+BM_V+(window.__bm?' (updated inside the app)':'')+'. Updates come from your GitHub repository.';
+$('#up').onclick=()=>{m1();tab('set')};$('#sd').onclick=()=>tab('lib');$('#cu').onclick=()=>checkUpdate(1);
 $('#ud').onclick=()=>{try{localStorage.setItem('bm-html',pend);localStorage.setItem('bm-try','0')}catch{toast('Couldn’t save the update');return}location.reload()};
 try{localStorage.setItem('bm-try','0')}catch{}
 checkUpdate();
