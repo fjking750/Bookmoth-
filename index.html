@@ -5,14 +5,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#101426">
 <title>Bookmoth</title>
-<script>try{var BV=3,s=localStorage.getItem('bm-html'),t=+localStorage.getItem('bm-try')||0;if(s&&!window.__bm){var m=s.match(/const BM_V=(\d+)/),v=m?+m[1]:0;if(t>=2){localStorage.removeItem('bm-html');localStorage.setItem('bm-try','0')}else if(v>BV){window.__bm=1;localStorage.setItem('bm-try',String(t+1));document.open();document.write(s);document.close()}}}catch(e){}</script>
+<script>try{var BV=6,s=localStorage.getItem('bm-html'),t=+localStorage.getItem('bm-try')||0;if(s&&!window.__bm){var m=s.match(/const BM_V=(\d+)/),v=m?+m[1]:0;if(t>=2){localStorage.removeItem('bm-html');localStorage.setItem('bm-try','0')}else if(v>BV){window.__bm=1;localStorage.setItem('bm-try',String(t+1));document.open();document.write(s);document.close()}}}catch(e){}</script>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700&family=Newsreader:ital,wght@0,400;0,500;1,400&display=swap">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jsQR/1.4.0/jsQR.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <style>
-:root{--bg:#F4F1FA;--sf:#fff;--ink:#1D2140;--mu:#6A6E8E;--ac:#5B4BDB;--on:#fff;--glow:#E7A400;--ln:#DDD8EE;color-scheme:light}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#101426;--sf:#1A2040;--ink:#EEF0FF;--mu:#9AA0C8;--ac:#8FA3FF;--on:#101426;--glow:#FFC857;--ln:#2A3260;color-scheme:dark}}
-:root[data-theme="dark"]{--bg:#101426;--sf:#1A2040;--ink:#EEF0FF;--mu:#9AA0C8;--ac:#8FA3FF;--on:#101426;--glow:#FFC857;--ln:#2A3260;color-scheme:dark}
+:root{--bg:#F4F1FA;--sf:#fff;--ink:#1D2140;--mu:#6A6E8E;--ac:#5B4BDB;--on:#fff;--glow:#E7A400;--ln:#DDD8EE;--ni:#6A6E8E;--na:#5B4BDB;--sb:#E7A400;--si:#101426;--sbw:0px;color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#000;--sf:#111114;--ink:#fff;--mu:#9B9BA6;--ac:#8FA3FF;--on:#000;--glow:#FFC857;--ln:#26262D;--ni:#fff;--na:#fff;--sb:#16161A;--si:#fff;--sbw:2px;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#000;--sf:#111114;--ink:#fff;--mu:#9B9BA6;--ac:#8FA3FF;--on:#000;--glow:#FFC857;--ln:#26262D;--ni:#fff;--na:#fff;--sb:#16161A;--si:#fff;--sbw:2px;color-scheme:dark}
 *{box-sizing:border-box;margin:0}
 html,body{height:100%}
 :root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
@@ -48,9 +48,9 @@ input[type=text],input[type=search]{width:100%;padding:13px 16px;border-radius:1
 .tag{font-size:13px;padding:3px 10px;border-radius:99px;border:1px solid var(--ln);white-space:nowrap}
 .tag.g{background:var(--glow);color:#101426;border-color:var(--glow)}
 nav{position:fixed;bottom:0;left:0;right:0;max-width:560px;margin:auto;background:var(--sf);border-top:1px solid var(--ln);display:flex;justify-content:space-around;align-items:center;padding:8px 0 calc(8px + env(safe-area-inset-bottom,0px))}
-nav button{display:flex;flex-direction:column;align-items:center;gap:2px;font-size:12px;color:var(--mu);padding:4px 18px}
-nav button.on{color:var(--ac)}
-nav .sc{width:62px;height:62px;border-radius:50%;background:var(--glow);color:#101426;margin-top:-30px;justify-content:center;box-shadow:0 0 22px var(--glow);padding:0}
+nav button{display:flex;flex-direction:column;align-items:center;gap:2px;font-size:12px;color:var(--ni);padding:4px 18px}
+nav button.on{color:var(--na)}nav button.sc.on{color:var(--si)}nav button.on:not(.sc)::after{content:"";width:5px;height:5px;border-radius:50%;background:var(--glow)}body.fl nav button::after{display:none}
+nav .sc{width:62px;height:62px;border-radius:50%;background:var(--sb);color:var(--si);border:var(--sbw) solid var(--glow);margin-top:-30px;justify-content:center;box-shadow:0 0 22px var(--glow);padding:0}
 #rd{z-index:12;position:fixed;inset:0;background:var(--bg);display:none;flex-direction:column;max-width:560px;margin:auto;padding-top:env(safe-area-inset-top,0px)}
 #rd.on{display:flex}
 #rd .tb{display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid var(--ln)}
@@ -63,7 +63,7 @@ nav .sc{width:62px;height:62px;border-radius:50%;background:var(--glow);color:#1
 body.fl nav{background:none;border:0;padding:0 20px calc(14px + env(safe-area-inset-bottom,0px));pointer-events:none}
 body.fl nav button{pointer-events:auto;width:58px;height:58px;border-radius:50%;background:var(--sf);border:1px solid var(--ln);box-shadow:0 6px 18px rgba(0,0,0,.28);padding:0;justify-content:center;font-size:0}
 body.fl nav button.on:not(.sc){border-color:var(--ac)}
-body.fl nav button.sc{background:var(--glow);color:#101426;width:68px;height:68px;margin-top:0;box-shadow:0 0 22px var(--glow);border:0}
+body.fl nav button.sc{background:var(--sb);color:var(--si);width:68px;height:68px;margin-top:0;box-shadow:0 0 22px var(--glow);border:var(--sbw) solid var(--glow)}
 .toast{position:fixed;left:50%;bottom:110px;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 18px;border-radius:99px;opacity:0;transition:opacity .25s;pointer-events:none;z-index:9}
 .toast.on{opacity:1}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
@@ -74,10 +74,10 @@ body.fl nav button.sc{background:var(--glow);color:#101426;width:68px;height:68p
 <div class="ub" id="ub" hidden><span id="ut"></span><button class="btn" id="ud">Update now</button></div>
 <main>
 <section id="s-lib" class="on"><h2>Your shelf</h2><div class="chips" id="ch"></div><p class="mu" id="hn" style="margin-bottom:10px"></p><div id="lib" class="grid"></div></section>
-<section id="s-scan"><h2>Scan a book’s QR code or barcode</h2>
-<div class="cam"><video id="v" playsinline muted></video><b></b><p id="cm">Tap “Take a photo of the code” and point your camera at the book’s QR code or barcode.</p></div>
-<div class="row"><button class="btn" id="ph">Take a photo of the code</button><button class="btn o" id="go">Live camera</button><input id="f" type="file" accept="image/*" capture="environment" hidden></div>
-<input type="text" id="man" placeholder="Or type a code, like 9780141439518" aria-label="Book code">
+<section id="s-scan"><h2>Scan a book’s barcode</h2>
+<div class="cam"><video id="v" playsinline muted></video><b></b><p id="cm">Aim at the ISBN barcode on the back of the book, or tap “Take a photo of the barcode”.</p></div>
+<div class="row"><button class="btn" id="ph">Take a photo of the barcode</button><button class="btn o" id="go">Live camera</button><input id="f" type="file" accept="image/*" capture="environment" hidden></div>
+<input type="text" id="man" placeholder="Or type the ISBN, like 9780141439518" aria-label="Book ISBN">
 <div class="row"><button class="btn o" id="add">Add code</button></div>
 <p class="mu">No book handy? Add a sample:</p>
 <div class="row" id="smp"></div></section>
@@ -100,7 +100,7 @@ body.fl nav button.sc{background:var(--glow);color:#101426;width:68px;height:68p
 <div class="sh" id="sh" hidden><div class="pn" id="pn"></div></div>
 <div class="toast" id="ts"></div>
 <script>
-const BM_V=3,UPD='https://raw.githubusercontent.com/fjking750/Bookmoth-/main/index.html';
+const BM_V=6,UPD='https://raw.githubusercontent.com/fjking750/Bookmoth-/main/index.html';
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const SAMPLES=[
 {i:'9780141439518',t:'Pride and Prejudice',a:'Jane Austen',x:'It is a truth universally acknowledged, that a single man in possession of a good fortune, must be in want of a wife.\n\nHowever little known the feelings or views of such a man may be on his first entering a neighbourhood, this truth is so well fixed in the minds of the surrounding families, that he is considered the rightful property of some one or other of their daughters.'},
@@ -113,12 +113,12 @@ lib=ld('bm-lib',[]);fs=ld('bm-fs',19);cats=ld('bm-cats',['Favorites','To read'])
 const hue=s=>[...s].reduce((a,c)=>(a*31+c.charCodeAt(0))%360,7);
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 let pend=null;
-async function checkUpdate(man){try{const c=new AbortController();setTimeout(()=>c.abort(),8000);const r=await fetch(UPD+'?t='+Date.now(),{signal:c.signal,cache:'no-store'});if(!r.ok)throw 0;const h=await r.text(),m=h.match(/const BM_V=(\d+)/),v=m?+m[1]:0;if(v>BM_V&&h.includes('</html>')){pend=h;$('#ut').textContent='Version '+v+' is ready.';$('#ub').hidden=false}else if(man)toast('You have the latest version (v'+BM_V+')')}catch{if(man)toast('Couldn’t check for updates. Check your internet.')}}
+async function checkUpdate(man){try{const c=new AbortController();setTimeout(()=>c.abort(),8000);const r=await fetch(UPD+'?t='+Date.now(),{signal:c.signal,cache:'no-store'});if(!r.ok)throw r.status;const h=await r.text(),m=h.match(/const BM_V=(\d+)/),v=m?+m[1]:0;if(v>BM_V&&h.includes('</html>')){pend=h;$('#ut').textContent='Version '+v+' is ready.';$('#ub').hidden=false}else if(man)toast('You have the latest version (v'+BM_V+')')}catch(e){if(man)toast(e===404?'Can’t see the update file. Make your GitHub repository public.':typeof e==='number'?'GitHub answered with error '+e+'.':'Couldn’t reach GitHub. Check your internet.')}}
 function toast(m){const t=$('#ts');t.textContent=m;t.classList.add('on');setTimeout(()=>t.classList.remove('on'),2200)}
 function tab(n){$$('section').forEach(s=>s.classList.toggle('on',s.id==='s-'+n));$$('nav button').forEach(b=>b.classList.toggle('on',b.dataset.t===n));if(n!=='scan')stop()}
 $$('nav button').forEach(b=>b.onclick=()=>tab(b.dataset.t));
 function render(){const g=$('#lib');
-if(!lib.length){$('#ch').innerHTML='';$('#hn').textContent='';g.style.display='block';g.innerHTML='<div class="empty"><p>Your shelf is empty. Scan the QR code on a book to add it.</p><button class="btn" id="e1">Scan your first book</button></div>';$('#e1').onclick=()=>tab('scan');return}
+if(!lib.length){$('#ch').innerHTML='';$('#hn').textContent='';g.style.display='block';g.innerHTML='<div class="empty"><p>Your shelf is empty. Scan the barcode on the back of a book to add it.</p><button class="btn" id="e1">Scan your first book</button></div>';$('#e1').onclick=()=>tab('scan');return}
 g.style.display='';g.innerHTML=lib.map((b,n)=>flt&&b.c!==flt?'':`<button class="book" data-n="${n}"><div class="cov" style="background:linear-gradient(160deg,hsl(${hue(b.t)} 45% 38%),hsl(${(hue(b.t)+40)%360} 50% 24%))"><span>${esc(b.t)}</span><small>${esc(b.a)}</small></div><div class="bar"><i style="width:${b.p||0}%"></i></div>${b.c?'<span class="mu">'+esc(b.c)+'</span>':''}</button>`).join('')||'<div class="empty" style="grid-column:1/-1"><p>Nothing in this catalog yet. Press and hold a book to add it.</p></div>';
 $$('.book').forEach(el=>{let t,lp=0;const n=+el.dataset.n,cl=()=>clearTimeout(t);el.onpointerdown=()=>{lp=0;t=setTimeout(()=>{lp=1;if(navigator.vibrate)navigator.vibrate(15);menu(n)},500)};el.onpointerup=cl;el.onpointerleave=cl;el.onpointercancel=cl;el.oncontextmenu=e=>e.preventDefault();el.onclick=()=>{if(!lp)open(n)}});chips()}
 function parse(raw){raw=raw.trim();const m=SAMPLES.find(s=>raw.includes(s.i));if(m)return{...m};
@@ -168,9 +168,9 @@ async function decode(src,w,h){if(det){try{const r=await det.detect(src);if(r[0]
 if(window.jsQR){const k=Math.min(1,1200/Math.max(w,h)),W=Math.round(w*k),H=Math.round(h*k);cv.width=W;cv.height=H;cx.drawImage(src,0,0,W,H);const d=jsQR(cx.getImageData(0,0,W,H).data,W,H);return d&&d.data}}
 async function loop(){const v=$('#v');if(!run)return;if(v.videoWidth){const c=await decode(v,v.videoWidth,v.videoHeight);if(c){addBook(c);return}}setTimeout(loop,250)}
 async function start(){try{stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'}});const v=$('#v');v.srcObject=stream;await v.play();$('#cm').style.display='none';$('.cam').classList.add('live');run=true;loop()}catch(e){stop();$('#cm').textContent=(e&&e.name==='NotAllowedError'?'This view won’t let the page use the live camera. ':'Live camera isn’t available. ')+'('+(e&&e.name||'unknown error')+') Opening your camera app instead…';try{$('#f').click()}catch{}}}
-function stop(){run=false;if(stream)stream.getTracks().forEach(t=>t.stop());stream=null;$('.cam').classList.remove('live');$('#cm').style.display='';$('#cm').textContent='Tap “Take a photo of the code” and point your camera at the book’s QR code or barcode.'}
+function stop(){run=false;if(stream)stream.getTracks().forEach(t=>t.stop());stream=null;$('.cam').classList.remove('live');$('#cm').style.display='';$('#cm').textContent='Aim at the ISBN barcode on the back of the book, or tap “Take a photo of the barcode”.'}
 $('#go').onclick=start;$('#ph').onclick=()=>$('#f').click();
-$('#f').onchange=async e=>{const f=e.target.files[0];if(!f)return;try{const bm=await createImageBitmap(f);const c=await decode(bm,bm.width,bm.height);c?addBook(c):toast('No QR code found in that photo')}catch{toast('Couldn’t read that photo')}e.target.value=''};
+$('#f').onchange=async e=>{const f=e.target.files[0];if(!f)return;try{const bm=await createImageBitmap(f);const c=await decode(bm,bm.width,bm.height);c?addBook(c):toast('No barcode found in that photo. Try again closer and in good light.')}catch{toast('Couldn’t read that photo')}e.target.value=''};
 /* nearby (demo listings) */
 const PLACES=['Riverside Library','Corner Page Bookshop','Campus Reading Room','Little Free Library','Central Library','Harbor Books'];
 const sd=s=>[...s].reduce((a,c)=>(a*33+c.charCodeAt(0))>>>0,5381);
