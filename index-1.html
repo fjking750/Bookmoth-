@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#101426">
+<title>Bookmoth</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700&family=Newsreader:ital,wght@0,400;0,500;1,400&display=swap">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jsQR/1.4.0/jsQR.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<style>
+:root{--bg:#F4F1FA;--sf:#fff;--ink:#1D2140;--mu:#6A6E8E;--ac:#5B4BDB;--on:#fff;--glow:#E7A400;--ln:#DDD8EE;color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#101426;--sf:#1A2040;--ink:#EEF0FF;--mu:#9AA0C8;--ac:#8FA3FF;--on:#101426;--glow:#FFC857;--ln:#2A3260;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#101426;--sf:#1A2040;--ink:#EEF0FF;--mu:#9AA0C8;--ac:#8FA3FF;--on:#101426;--glow:#FFC857;--ln:#2A3260;color-scheme:dark}
+*{box-sizing:border-box;margin:0}
+html,body{height:100%}
+:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+body{background:var(--bg);color:var(--ink);font:16px/1.4 "Bricolage Grotesque",system-ui,sans-serif;display:flex;flex-direction:column;max-width:560px;margin:auto}
+header{display:flex;align-items:center;justify-content:space-between;padding:14px 18px 6px}
+h1{font-size:26px;letter-spacing:-.5px}
+h1 span{color:var(--glow)}
+button,input{font:inherit;color:inherit}
+button{cursor:pointer;border:0;background:none}
+:focus-visible{outline:3px solid var(--glow);outline-offset:2px}
+.ic{width:42px;height:42px;border-radius:50%;background:var(--sf);display:grid;place-items:center;border:1px solid var(--ln)}
+svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+main{flex:1;overflow-y:auto;padding:8px 18px 100px}
+section{display:none}section.on{display:block}
+h2{font-size:20px;margin:10px 0 12px}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+.book{text-align:left;display:flex;flex-direction:column;gap:6px}
+.cov{aspect-ratio:2/3;border-radius:4px 12px 12px 4px;padding:14px 12px;display:flex;flex-direction:column;justify-content:space-between;color:#fff;box-shadow:inset 6px 0 0 rgba(0,0,0,.18);font-weight:700;line-height:1.15}
+.cov small{font-weight:500;opacity:.85}
+.bar{height:4px;background:var(--ln);border-radius:2px}.bar i{display:block;height:100%;background:var(--glow);border-radius:2px}
+.mu{color:var(--mu);font-size:14px}
+.empty{text-align:center;padding:40px 10px}
+.empty p{margin:8px 0 18px}
+.btn{background:var(--ac);color:var(--on);padding:12px 20px;border-radius:99px;font-weight:700}
+a.btn{text-decoration:none;display:inline-block}.btn.o{background:none;color:var(--ac);border:1.5px solid var(--ac)}
+.row{display:flex;gap:10px;flex-wrap:wrap;margin:12px 0}
+.cam{position:relative;border-radius:20px;overflow:hidden;background:#000;aspect-ratio:1;display:grid;place-items:center}
+.cam video{width:100%;height:100%;object-fit:cover;display:none}.cam.live video{display:block}
+.cam b{display:none;position:absolute;inset:18%;border:3px solid var(--glow);border-radius:18px;box-shadow:0 0 0 999px rgba(0,0,0,.45),0 0 24px var(--glow)}
+.cam.live b{display:block}.cam p{position:absolute;color:#fff;padding:20px;text-align:center}
+input[type=text],input[type=search]{width:100%;padding:13px 16px;border-radius:14px;border:1.5px solid var(--ln);background:var(--sf)}
+.res{background:var(--sf);border:1px solid var(--ln);border-radius:16px;padding:14px;margin-top:10px;display:flex;justify-content:space-between;gap:10px;align-items:center}
+.tag{font-size:13px;padding:3px 10px;border-radius:99px;border:1px solid var(--ln);white-space:nowrap}
+.tag.g{background:var(--glow);color:#101426;border-color:var(--glow)}
+nav{position:fixed;bottom:0;left:0;right:0;max-width:560px;margin:auto;background:var(--sf);border-top:1px solid var(--ln);display:flex;justify-content:space-around;align-items:center;padding:8px 0 calc(8px + env(safe-area-inset-bottom,0px))}
+nav button{display:flex;flex-direction:column;align-items:center;gap:2px;font-size:12px;color:var(--mu);padding:4px 18px}
+nav button.on{color:var(--ac)}
+nav .sc{width:62px;height:62px;border-radius:50%;background:var(--glow);color:#101426;margin-top:-30px;justify-content:center;box-shadow:0 0 22px var(--glow);padding:0}
+#rd{z-index:12;position:fixed;inset:0;background:var(--bg);display:none;flex-direction:column;max-width:560px;margin:auto;padding-top:env(safe-area-inset-top,0px)}
+#rd.on{display:flex}
+#rd .tb{display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid var(--ln)}
+#rd .tb b{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#txt{flex:1;overflow-y:auto;padding:22px 22px 60px;font-family:Newsreader,Georgia,serif;font-size:19px;line-height:1.65}
+#txt p{margin-bottom:1em}
+.book{-webkit-touch-callout:none;user-select:none;-webkit-user-select:none}.chips{display:flex;gap:8px;overflow-x:auto;padding-bottom:10px}.chip{padding:7px 14px;border-radius:99px;border:1px solid var(--ln);white-space:nowrap}.chip.on{background:var(--ac);color:var(--on);border-color:var(--ac)}.sh{position:fixed;inset:0;background:rgba(0,0,0,.5);display:flex;align-items:flex-end;justify-content:center;z-index:20}.sh[hidden]{display:none}.pn{background:var(--sf);width:100%;max-width:560px;border-radius:22px 22px 0 0;padding:18px 18px calc(18px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:8px}.pn h3{font-size:18px;margin-bottom:4px}.mi{text-align:left;padding:14px 16px;border-radius:14px;border:1px solid var(--ln);font-weight:500}.mi.cur{border-color:var(--ac);color:var(--ac)}.mi.dg{color:#E5484D;border-color:#E5484D}
+.toast{position:fixed;left:50%;bottom:110px;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 18px;border-radius:99px;opacity:0;transition:opacity .25s;pointer-events:none;z-index:9}
+.toast.on{opacity:1}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<header><h1>Book<span>moth</span></h1><button class="ic" id="th" aria-label="Switch light or dark mode"><svg viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg></button></header>
+<main>
+<section id="s-lib" class="on"><h2>Your shelf</h2><div class="chips" id="ch"></div><p class="mu" id="hn" style="margin-bottom:10px"></p><div id="lib" class="grid"></div></section>
+<section id="s-scan"><h2>Scan a book’s QR code or barcode</h2>
+<div class="cam"><video id="v" playsinline muted></video><b></b><p id="cm">Tap “Take a photo of the code” and point your camera at the book’s QR code or barcode.</p></div>
+<div class="row"><button class="btn" id="ph">Take a photo of the code</button><button class="btn o" id="go">Live camera</button><input id="f" type="file" accept="image/*" capture="environment" hidden></div>
+<input type="text" id="man" placeholder="Or type a code, like 9780141439518" aria-label="Book code">
+<div class="row"><button class="btn o" id="add">Add code</button></div>
+<p class="mu">No book handy? Add a sample:</p>
+<div class="row" id="smp"></div></section>
+<section id="s-near"><h2>Find a book near you</h2>
+<input type="search" id="q" placeholder="Title or author" aria-label="Book title or author">
+<div class="row"><button class="btn" id="fs">Search nearby</button></div>
+<div id="nr"></div></section>
+</main>
+<div id="rd"><div class="tb"><button class="ic" id="bk" aria-label="Back to shelf"><svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg></button><b id="rt"></b><button class="ic" id="fm" aria-label="Smaller text">A−</button><button class="ic" id="fp" aria-label="Larger text">A+</button></div><div id="txt"></div></div>
+<nav>
+<button data-t="lib" class="on"><svg viewBox="0 0 24 24"><path d="M4 4h4v16H4zM10 4h4v16h-4zM16.5 5l3.8 1-3.6 14-3.8-1z"/></svg>Shelf</button>
+<button data-t="scan" class="sc" aria-label="Scan"><svg viewBox="0 0 24 24"><path d="M4 8V5a1 1 0 0 1 1-1h3M16 4h3a1 1 0 0 1 1 1v3M20 16v3a1 1 0 0 1-1 1h-3M8 20H5a1 1 0 0 1-1-1v-3M4 12h16"/></svg></button>
+<button data-t="near"><svg viewBox="0 0 24 24"><path d="M12 21s7-6.2 7-11.5A7 7 0 0 0 5 9.5C5 14.800 12 21 12 21z"/><circle cx="12" cy="9.500" r="2.500"/></svg>Nearby</button>
+</nav>
+<div class="sh" id="sh" hidden><div class="pn" id="pn"></div></div>
+<div class="toast" id="ts"></div>
+<script>
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const SAMPLES=[
+{i:'9780141439518',t:'Pride and Prejudice',a:'Jane Austen',x:'It is a truth universally acknowledged, that a single man in possession of a good fortune, must be in want of a wife.\n\nHowever little known the feelings or views of such a man may be on his first entering a neighbourhood, this truth is so well fixed in the minds of the surrounding families, that he is considered the rightful property of some one or other of their daughters.'},
+{i:'9780141439761',t:'Alice’s Adventures in Wonderland',a:'Lewis Carroll',x:'Alice was beginning to get very tired of sitting by her sister on the bank, and of having nothing to do: once or twice she had peeped into the book her sister was reading, but it had no pictures or conversations in it, “and what is the use of a book,” thought Alice “without pictures or conversations?”'},
+{i:'9780142437247',t:'Moby-Dick',a:'Herman Melville',x:'Call me Ishmael. Some years ago—never mind how long precisely—having little or no money in my purse, and nothing particular to interest me on shore, I thought I would sail about a little and see the watery part of the world.'}];
+let lib=[],fs=19,cur=null,flt='',cats=[];
+const ld=(k,d)=>{try{return JSON.parse(localStorage.getItem(k))??d}catch{return d}};
+const sv=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch{}};
+lib=ld('bm-lib',[]);fs=ld('bm-fs',19);cats=ld('bm-cats',['Favorites','To read']);
+const hue=s=>[...s].reduce((a,c)=>(a*31+c.charCodeAt(0))%360,7);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function toast(m){const t=$('#ts');t.textContent=m;t.classList.add('on');setTimeout(()=>t.classList.remove('on'),2200)}
+function tab(n){$$('section').forEach(s=>s.classList.toggle('on',s.id==='s-'+n));$$('nav button').forEach(b=>b.classList.toggle('on',b.dataset.t===n));if(n!=='scan')stop()}
+$$('nav button').forEach(b=>b.onclick=()=>tab(b.dataset.t));
+function render(){const g=$('#lib');
+if(!lib.length){$('#ch').innerHTML='';$('#hn').textContent='';g.style.display='block';g.innerHTML='<div class="empty"><p>Your shelf is empty. Scan the QR code on a book to add it.</p><button class="btn" id="e1">Scan your first book</button></div>';$('#e1').onclick=()=>tab('scan');return}
+g.style.display='';g.innerHTML=lib.map((b,n)=>flt&&b.c!==flt?'':`<button class="book" data-n="${n}"><div class="cov" style="background:linear-gradient(160deg,hsl(${hue(b.t)} 45% 38%),hsl(${(hue(b.t)+40)%360} 50% 24%))"><span>${esc(b.t)}</span><small>${esc(b.a)}</small></div><div class="bar"><i style="width:${b.p||0}%"></i></div>${b.c?'<span class="mu">'+esc(b.c)+'</span>':''}</button>`).join('')||'<div class="empty" style="grid-column:1/-1"><p>Nothing in this catalog yet. Press and hold a book to add it.</p></div>';
+$$('.book').forEach(el=>{let t,lp=0;const n=+el.dataset.n,cl=()=>clearTimeout(t);el.onpointerdown=()=>{lp=0;t=setTimeout(()=>{lp=1;if(navigator.vibrate)navigator.vibrate(15);menu(n)},500)};el.onpointerup=cl;el.onpointerleave=cl;el.onpointercancel=cl;el.oncontextmenu=e=>e.preventDefault();el.onclick=()=>{if(!lp)open(n)}});chips()}
+function parse(raw){raw=raw.trim();const m=SAMPLES.find(s=>raw.includes(s.i));if(m)return{...m};
+const d=raw.replace(/[-\s]/g,'');if(/^(97[89]\d{10}|\d{9}[\dXx])$/.test(d))return{i:d,t:'ISBN '+d,a:'Title not looked up yet',x:'',n:1};
+try{const j=JSON.parse(raw);if(j.t)return{i:j.i||raw,t:j.t,a:j.a||'Unknown author',x:j.x||'',u:j.u}}catch{}
+if(raw.includes('|')){const[t,a,i]=raw.split('|');return{i:i||raw,t,a:a||'Unknown author',x:''}}
+if(/^https?:\/\//.test(raw)){let h=raw;try{h=new URL(raw).hostname.replace('www.','')}catch{}return{i:raw,t:h,a:'Linked book',x:'',u:raw}}
+return{i:raw,t:'Book …'+raw.slice(-6),a:'Unknown author',x:''}}
+async function find(b){try{const c=new AbortController();setTimeout(()=>c.abort(),6000);const r=await fetch('https://openlibrary.org/api/books?bibkeys=ISBN:'+b.i+'&format=json&jscmd=data',{signal:c.signal});const o=(await r.json())['ISBN:'+b.i];if(o){b.t=o.title;b.a=(o.authors||[]).map(x=>x.name).join(', ')||'Unknown author';const e=(o.ebooks||[])[0];b.free=e&&e.availability==='full'?e.preview_url:'';b.n=0;sv('bm-lib',lib);render();toast('Found “'+b.t+'”')}}catch{}}
+function addBook(raw){if(!raw)return;const b=parse(raw);if(lib.some(x=>x.i===b.i)){toast('Already on your shelf');return}
+lib.unshift(b);sv('bm-lib',lib);render();toast('Added “'+b.t+'”');stop();tab('lib');if(b.n)find(b)}
+function chips(){$('#ch').innerHTML=['All',...cats].map(c=>`<button class="chip${(c==='All'?'':c)===flt?' on':''}" data-c="${esc(c)}">${esc(c)}</button>`).join('');$('#hn').textContent='Press and hold a book for options.';$$('.chip').forEach(b=>b.onclick=()=>{flt=b.dataset.c==='All'?'':b.dataset.c;render()})}
+function shut(){$('#sh').hidden=true}
+$('#sh').onclick=e=>{if(e.target.id==='sh')shut()};
+function setCat(n,c){const w=lib[n].c?'Moved to ':'Added to ';lib[n].c=c;if(!cats.includes(c)){cats.push(c);sv('bm-cats',cats)}sv('bm-lib',lib);shut();render();toast(w+c)}
+function menu(n,m){const b=lib[n],pn=$('#pn');$('#sh').hidden=false;
+if(m==='cat'){pn.innerHTML='<h3>'+(b.c?'Change catalog':'Add to catalog')+'</h3>'+cats.map(c=>`<button class="mi${c===b.c?' cur':''}" data-c="${esc(c)}">${esc(c)}</button>`).join('')+'<input type="text" id="nc" maxlength="24" placeholder="New catalog name" aria-label="New catalog name"><button class="mi" id="mk">Create and add</button>';
+$$('#pn [data-c]').forEach(x=>x.onclick=()=>setCat(n,x.dataset.c));$('#mk').onclick=()=>{const v=$('#nc').value.trim();if(v)setCat(n,v)};return}
+pn.innerHTML=`<h3>${esc(b.t)}</h3><button class="mi" id="m1">${b.c?'Change catalog':'Add to catalog'}</button><button class="mi dg" id="m2">Delete</button>`;
+$('#m1').onclick=()=>menu(n,'cat');
+$('#m2').onclick=function(){if(!this.dataset.s){this.dataset.s=1;this.textContent='Tap again to delete';return}lib.splice(n,1);sv('bm-lib',lib);shut();render();toast('Deleted')}}
+const idb=()=>new Promise((r,j)=>{const q=indexedDB.open('bm',1);q.onupgradeneeded=()=>q.result.createObjectStore('f');q.onsuccess=()=>r(q.result);q.onerror=j});
+const fput=async(k,v)=>{const d=await idb();return new Promise(r=>{const t=d.transaction('f','readwrite');t.objectStore('f').put(v,k);t.oncomplete=r;t.onerror=r})};
+const fget=async k=>{const d=await idb();return new Promise(r=>{const q=d.transaction('f').objectStore('f').get(k);q.onsuccess=()=>r(q.result);q.onerror=()=>r()})};
+function emptyHtml(b){if(b.f)return '<p>Opening your copy…</p>';const q=encodeURIComponent(b.i),isb=/^(97[89]\d{10}|\d{9}[\dXx])$/.test(b.i),a=(h,l)=>`<a class="btn o" target="_blank" rel="noopener" href="${h}">${l}</a>`;
+return '<p>No pages for this book yet.</p><p class="mu" style="font:15px/1.4 system-ui,sans-serif">Attach an EPUB, CBZ or text file that you own, or find a copy to read.</p><div class="row"><button class="btn" id="at">Attach my copy</button><input id="af" type="file" accept=".epub,.cbz,.zip,.txt,.md,.html" hidden></div><div class="row">'+(b.free?a(esc(b.free),'Read free online'):'')+(isb?a('https://openlibrary.org/isbn/'+q,'Borrow')+a('https://search.worldcat.org/search?q=bn%3A'+q,'Find in a library')+a('https://www.google.com/search?q=buy+book+isbn+'+q,'Buy it'):'')+(b.u?a(esc(b.u),'Open the book link'):'')+'</div>'}
+async function show(b){const t=$('#txt'),f=await fget(b.i);if(!f)return false;const n=(b.f||'').toLowerCase();
+if(n.endsWith('.cbz')||n.endsWith('.zip')){const z=await JSZip.loadAsync(f);const ks=Object.keys(z.files).filter(k=>/\.(jpe?g|png|webp)$/i.test(k)).sort((x,y)=>x.localeCompare(y,undefined,{numeric:true}));t.innerHTML='';for(const k of ks){const im=new Image();im.src=URL.createObjectURL(await z.files[k].async('blob'));im.style.cssText='width:100%;display:block;margin-bottom:6px';t.appendChild(im)}return true}
+if(n.endsWith('.epub')){const z=await JSZip.loadAsync(f),dp=new DOMParser(),rd=async p=>z.file(p)?z.file(p).async('string'):'';const c=dp.parseFromString(await rd('META-INF/container.xml'),'text/xml'),op=c.querySelector('rootfile').getAttribute('full-path'),o=dp.parseFromString(await rd(op),'text/xml'),base=op.includes('/')?op.slice(0,op.lastIndexOf('/')+1):'',man={};o.querySelectorAll('manifest item').forEach(i=>man[i.getAttribute('id')]=i.getAttribute('href'));let h='';for(const r of o.querySelectorAll('spine itemref')){const d=dp.parseFromString(await rd(decodeURIComponent(base+man[r.getAttribute('idref')])),'text/html');h+=[...d.body.querySelectorAll('p,h1,h2,h3,h4')].map(e=>'<p>'+esc(e.textContent.trim())+'</p>').join('')}t.innerHTML=h||'<p>Couldn’t read this EPUB.</p>';return true}
+t.innerHTML=(await f.text()).split(/\n\s*\n/).map(p=>'<p>'+esc(p)+'</p>').join('');return true}
+function bind(b){const a=$('#at'),f=$('#af');if(!a)return;a.onclick=()=>f.click();f.onchange=async()=>{const x=f.files[0];if(!x)return;if(/\.pdf$/i.test(x.name)){toast('PDF isn’t supported yet. Use EPUB, CBZ or text.');return}await fput(b.i,x);b.f=x.name;sv('bm-lib',lib);toast('Copy attached');open(lib.indexOf(b))}}
+async function setup(b){if(b.x)return;const t=$('#txt');if(b.f){let ok=0;try{ok=await show(b)}catch{}if(!ok)t.innerHTML='<p>Couldn’t open your copy.</p>'+emptyHtml({...b,f:0});else t.scrollTop=(b.p||0)/100*(t.scrollHeight-t.clientHeight)}bind(b)}
+function open(n){cur=lib[n];$('#rt').textContent=cur.t;const t=$('#txt');t.style.fontSize=fs+'px';
+t.innerHTML=cur.x?cur.x.split('\n\n').map(p=>'<p>'+esc(p)+'</p>').join(''):emptyHtml(cur);
+$('#rd').classList.add('on');setup(cur);t.scrollTop=(cur.p||0)/100*(t.scrollHeight-t.clientHeight);
+t.onscroll=()=>{const m=t.scrollHeight-t.clientHeight;cur.p=m>0?Math.round(t.scrollTop/m*100):100;sv('bm-lib',lib)}}
+$('#bk').onclick=()=>{$('#rd').classList.remove('on');render()};
+$('#fm').onclick=()=>{fs=Math.max(14,fs-2);$('#txt').style.fontSize=fs+'px';sv('bm-fs',fs)};
+$('#fp').onclick=()=>{fs=Math.min(30,fs+2);$('#txt').style.fontSize=fs+'px';sv('bm-fs',fs)};
+$('#smp').innerHTML=SAMPLES.map(s=>`<button class="btn o" data-i="${s.i}">${esc(s.t.split(' ')[0])}</button>`).join('');
+$$('#smp button').forEach(b=>b.onclick=()=>addBook(b.dataset.i));
+$('#add').onclick=()=>{addBook($('#man').value);$('#man').value=''};
+/* scanning */
+let stream,run=false;const det='BarcodeDetector' in window?new BarcodeDetector({formats:['qr_code','ean_13','ean_8','upc_a']}):null;
+const cv=document.createElement('canvas'),cx=cv.getContext('2d',{willReadFrequently:true});
+async function decode(src,w,h){if(det){try{const r=await det.detect(src);if(r[0])return r[0].rawValue}catch{}}
+if(window.jsQR){const k=Math.min(1,1200/Math.max(w,h)),W=Math.round(w*k),H=Math.round(h*k);cv.width=W;cv.height=H;cx.drawImage(src,0,0,W,H);const d=jsQR(cx.getImageData(0,0,W,H).data,W,H);return d&&d.data}}
+async function loop(){const v=$('#v');if(!run)return;if(v.videoWidth){const c=await decode(v,v.videoWidth,v.videoHeight);if(c){addBook(c);return}}setTimeout(loop,250)}
+async function start(){try{stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'}});const v=$('#v');v.srcObject=stream;await v.play();$('#cm').style.display='none';$('.cam').classList.add('live');run=true;loop()}catch(e){stop();$('#cm').textContent=(e&&e.name==='NotAllowedError'?'This view won’t let the page use the live camera. ':'Live camera isn’t available. ')+'('+(e&&e.name||'unknown error')+') Opening your camera app instead…';try{$('#f').click()}catch{}}}
+function stop(){run=false;if(stream)stream.getTracks().forEach(t=>t.stop());stream=null;$('.cam').classList.remove('live');$('#cm').style.display='';$('#cm').textContent='Tap “Take a photo of the code” and point your camera at the book’s QR code or barcode.'}
+$('#go').onclick=start;$('#ph').onclick=()=>$('#f').click();
+$('#f').onchange=async e=>{const f=e.target.files[0];if(!f)return;try{const bm=await createImageBitmap(f);const c=await decode(bm,bm.width,bm.height);c?addBook(c):toast('No QR code found in that photo')}catch{toast('Couldn’t read that photo')}e.target.value=''};
+/* nearby (demo listings) */
+const PLACES=['Riverside Library','Corner Page Bookshop','Campus Reading Room','Little Free Library','Central Library','Harbor Books'];
+const sd=s=>[...s].reduce((a,c)=>(a*33+c.charCodeAt(0))>>>0,5381);
+function nearby(q,loc){const mine=lib.find(b=>(b.t+b.a).toLowerCase().includes(q.toLowerCase()));
+let h=mine?`<div class="res"><div><b>${esc(mine.t)}</b><div class="mu">Already on your shelf</div></div><button class="btn" id="rdn">Read</button></div>`:'';
+const L=PLACES.map(n=>({n,d:(3+sd(q+n)%48)/10,s:sd(n+q)%3})).sort((a,b)=>a.d-b.d).slice(0,4);
+h+=(mine?'<p class="mu" style="margin-top:14px">Also nearby:</p>':'<p class="mu">Not on your shelf. Closest places with it:</p>')+L.map(p=>`<div class="res"><div><b>${esc(p.n)}</b><div class="mu">${p.d.toFixed(1)} km away</div></div><span class="tag ${p.s<2?'g':''}">${['On shelf','1 copy left','Reserve only'][p.s]}</span></div>`).join('');
+h+=`<div class="row"><a class="btn o" style="text-decoration:none" target="_blank" rel="noopener" href="https://www.google.com/maps/search/library+bookstore/@${loc.lat},${loc.lng},14z">See real libraries on the map</a></div><p class="mu">Listings are sample data until a library catalog is connected.</p>`;
+$('#nr').innerHTML=h;if(mine)$('#rdn').onclick=()=>open(lib.indexOf(mine))}
+$('#fs').onclick=()=>{const q=$('#q').value.trim();if(!q){toast('Type a title or author first');return}
+$('#nr').innerHTML='<p class="mu">Finding your location…</p>';
+if(!navigator.geolocation){$('#nr').innerHTML='<p class="mu">Location isn’t available on this device.</p>';return}
+navigator.geolocation.getCurrentPosition(p=>nearby(q,{lat:p.coords.latitude.toFixed(4),lng:p.coords.longitude.toFixed(4)}),err=>{$('#nr').innerHTML='<p class="mu">'+(err.code===1?'Location is blocked for this page. In Android Settings, open Apps, then Claude, then Permissions, allow Location, and reload.':err.code===3?'Finding your location took too long. Try again near a window or outdoors.':'Your location isn’t available right now.')+'</p>'},{timeout:15000,maximumAge:60000})};
+/* theme */
+$('#th').onclick=()=>{const r=document.documentElement,dk=r.dataset.theme?r.dataset.theme==='dark':matchMedia('(prefers-color-scheme:dark)').matches;r.dataset.theme=dk?'light':'dark';try{localStorage.setItem('bm-th',r.dataset.theme)}catch{}};
+try{const t=localStorage.getItem('bm-th');if(t)document.documentElement.dataset.theme=t}catch{}
+render();
+</script>
+</body>
+</html>
