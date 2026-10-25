@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#101426">
 <title>Bookmoth</title>
-<script>try{var BV=5,s=localStorage.getItem('bm-html'),t=+localStorage.getItem('bm-try')||0;if(s&&!window.__bm){var m=s.match(/const BM_V=(\d+)/),v=m?+m[1]:0;if(t>=2){localStorage.removeItem('bm-html');localStorage.setItem('bm-try','0')}else if(v>BV){window.__bm=1;localStorage.setItem('bm-try',String(t+1));document.open();document.write(s);document.close()}}}catch(e){}</script>
+<script>try{var BV=7,s=localStorage.getItem('bm-html'),t=+localStorage.getItem('bm-try')||0;if(s&&!window.__bm){var m=s.match(/const BM_V=(\d+)/),v=m?+m[1]:0;if(t>=2){localStorage.removeItem('bm-html');localStorage.setItem('bm-try','0')}else if(v>BV){window.__bm=1;localStorage.setItem('bm-try',String(t+1));document.open();document.write(s);document.close()}}}catch(e){}</script>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700&family=Newsreader:ital,wght@0,400;0,500;1,400&display=swap">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jsQR/1.4.0/jsQR.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
@@ -100,7 +100,10 @@ body.fl nav button.sc{background:var(--sb);color:var(--si);width:68px;height:68p
 <div class="sh" id="sh" hidden><div class="pn" id="pn"></div></div>
 <div class="toast" id="ts"></div>
 <script>
-const BM_V=5,UPD='https://raw.githubusercontent.com/fjking750/Bookmoth-/main/index.html';
+const KEEP=new Set([...document.head.children,...document.body.children]);
+function dedupe(){document.querySelectorAll('head>*,body>*').forEach(e=>{if(!KEEP.has(e))e.remove()})}
+['DOMContentLoaded','load'].forEach(v=>addEventListener(v,dedupe));[150,600,1500,3000].forEach(t=>setTimeout(dedupe,t));
+const BM_V=7,UPD='https://raw.githubusercontent.com/fjking750/Bookmoth-/main/index.html';
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const SAMPLES=[
 {i:'9780141439518',t:'Pride and Prejudice',a:'Jane Austen',x:'It is a truth universally acknowledged, that a single man in possession of a good fortune, must be in want of a wife.\n\nHowever little known the feelings or views of such a man may be on his first entering a neighbourhood, this truth is so well fixed in the minds of the surrounding families, that he is considered the rightful property of some one or other of their daughters.'},
@@ -113,7 +116,7 @@ lib=ld('bm-lib',[]);fs=ld('bm-fs',19);cats=ld('bm-cats',['Favorites','To read'])
 const hue=s=>[...s].reduce((a,c)=>(a*31+c.charCodeAt(0))%360,7);
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 let pend=null;
-async function checkUpdate(man){try{const c=new AbortController();setTimeout(()=>c.abort(),8000);const r=await fetch(UPD+'?t='+Date.now(),{signal:c.signal,cache:'no-store'});if(!r.ok)throw 0;const h=await r.text(),m=h.match(/const BM_V=(\d+)/),v=m?+m[1]:0;if(v>BM_V&&h.includes('</html>')){pend=h;$('#ut').textContent='Version '+v+' is ready.';$('#ub').hidden=false}else if(man)toast('You have the latest version (v'+BM_V+')')}catch{if(man)toast('Couldn’t check for updates. Check your internet.')}}
+async function checkUpdate(man){try{const c=new AbortController();setTimeout(()=>c.abort(),8000);const r=await fetch(UPD+'?t='+Date.now(),{signal:c.signal,cache:'no-store'});if(!r.ok)throw r.status;const h=await r.text(),m=h.match(/const BM_V=(\d+)/),v=m?+m[1]:0;if(v>BM_V&&h.includes('</html>')){pend=h;$('#ut').textContent='Version '+v+' is ready.';$('#ub').hidden=false}else if(man)toast('You have the latest version (v'+BM_V+')')}catch(e){if(man)toast(e===404?'Can’t see the update file. Make your GitHub repository public.':typeof e==='number'?'GitHub answered with error '+e+'.':'Couldn’t reach GitHub. Check your internet.')}}
 function toast(m){const t=$('#ts');t.textContent=m;t.classList.add('on');setTimeout(()=>t.classList.remove('on'),2200)}
 function tab(n){$$('section').forEach(s=>s.classList.toggle('on',s.id==='s-'+n));$$('nav button').forEach(b=>b.classList.toggle('on',b.dataset.t===n));if(n!=='scan')stop()}
 $$('nav button').forEach(b=>b.onclick=()=>tab(b.dataset.t));
