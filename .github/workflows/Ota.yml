@@ -1,0 +1,33 @@
+name: Publish update
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - index.html
+      - updater.js
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Package the web app
+        run: |
+          mkdir www
+          cp index.html updater.js www/
+          sed -i 's#</body>#<script src="updater.js"></script></body>#' www/index.html
+          grep -q 'updater.js' www/index.html
+          cd www && zip -r ../www.zip .
+
+      - name: Publish release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ github.run_number }}
+          name: Update ${{ github.run_number }}
+          files: www.zip
