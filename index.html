@@ -100,7 +100,7 @@ body.fl nav button.sc{background:var(--sb);color:var(--si);width:68px;height:68p
 <div class="sh" id="sh" hidden><div class="pn" id="pn"></div></div>
 <div class="toast" id="ts"></div>
 <script>
-const BM_V=11,UPD='https://raw.githubusercontent.com/fjking750/Bookmoth-/main/index.html';
+const BM_V=12,UPD='https://raw.githubusercontent.com/fjking750/Bookmoth-/main/index.html';
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const SAMPLES=[
 {i:'9780141439518',t:'Pride and Prejudice',a:'Jane Austen',x:'It is a truth universally acknowledged, that a single man in possession of a good fortune, must be in want of a wife.\n\nHowever little known the feelings or views of such a man may be on his first entering a neighbourhood, this truth is so well fixed in the minds of the surrounding families, that he is considered the rightful property of some one or other of their daughters.'},
@@ -346,4 +346,67 @@ document.addEventListener('click',function(e){
   function fallback(){window.open(url,'_blank')}
   try{var p=B.open({url:url});if(p&&p.catch)p.catch(fallback)}catch(err){fallback()}
 },true);
+</script>
+<script>
+(function(){
+  // VIZ page for each book. The first line is Chainsaw Man Vol. 8.
+  var SEED={
+    'chainsawmanvol8':'https://www.viz.com/manga-books/manga/chainsaw-man-volume-8-0/product/6887'
+  };
+  var norm=function(s){return String(s||'').toLowerCase().replace(/[^a-z0-9]/g,'')};
+
+  function vizUrl(b){
+    return b.viz||SEED[norm(b.t)]||('https://www.google.com/search?q='+encodeURIComponent('site:viz.com '+b.t));
+  }
+
+  function openWin(url){
+    var Cap=window.Capacitor;
+    if(!Cap||(Cap.getPlatform&&Cap.getPlatform()==='web')){
+      var a=document.createElement('a');
+      a.href=url;a.target='_blank';a.rel='noopener';
+      document.body.appendChild(a);a.click();a.remove();
+      return;
+    }
+    var B=(Cap.Plugins&&Cap.Plugins.Browser)||(Cap.registerPlugin&&Cap.registerPlugin('Browser'));
+    function fail(){toast('Couldn’t open VIZ. Install the latest app version.')}
+    try{var p=B.open({url:url});if(p&&p.catch)p.catch(fail)}catch(e){fail()}
+  }
+
+  var downAt=0;
+  document.addEventListener('pointerdown',function(e){
+    if(e.target.closest&&e.target.closest('.book'))downAt=Date.now();
+  },true);
+  document.addEventListener('click',function(e){
+    var el=e.target.closest&&e.target.closest('.book');
+    if(!el)return;
+    if(Date.now()-downAt>450)return; // long press: leave it to the options menu
+    var b=lib[+el.dataset.n];
+    if(!b||b.f||b.x)return; // attached or built-in books open in the reader as before
+    e.preventDefault();e.stopImmediatePropagation();
+    openWin(vizUrl(b));
+  },true);
+
+  if(typeof menu==='function'){
+    var _menu=menu;
+    menu=function(n,m){
+      _menu(n,m);
+      if(m)return;
+      var pn=document.getElementById('pn'),b=lib[n];
+      if(!pn||!b)return;
+      var btn=document.createElement('button');
+      btn.className='mi';
+      btn.textContent=b.viz?'Change VIZ link':'Set VIZ link';
+      btn.onclick=function(){
+        var v=prompt('Paste the VIZ page link for this book',b.viz||'');
+        if(v===null)return;
+        v=v.trim();
+        if(v&&!/^https?:\/\/(www\.)?viz\.com\//i.test(v)){toast('That doesn’t look like a VIZ link');return}
+        if(v)b.viz=v;else delete b.viz;
+        sv('bm-lib',lib);shut();
+        toast(v?'VIZ link saved':'VIZ link removed');
+      };
+      pn.insertBefore(btn,pn.querySelector('.mi.dg'));
+    };
+  }
+})();
 </script>
