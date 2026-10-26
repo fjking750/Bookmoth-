@@ -19,10 +19,15 @@ jobs:
 
       - name: Package the web app
         run: |
+          test -f index.html || { echo "::error::index.html is missing from the repo root"; exit 1; }
+          test -f updater.js || { echo "::error::updater.js is missing from the repo root - check the spelling"; exit 1; }
           mkdir www
           cp index.html updater.js www/
-          sed -i 's#</body>#<script src="updater.js"></script></body>#' www/index.html
-          grep -q 'updater.js' www/index.html
+          if grep -qi '</body>' www/index.html; then
+            sed -i 's#</body>#<script src="updater.js"></script></body>#I' www/index.html
+          else
+            echo '<script src="updater.js"></script>' >> www/index.html
+          fi
           cd www && zip -r ../www.zip .
 
       - name: Publish release
