@@ -200,3 +200,60 @@ checkUpdate();
 </script>
 </body>
 </html>
+<style>
+.cov{position:relative;overflow:hidden}
+.ci{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;pointer-events:none}
+.cov.hascov::after{content:"";position:absolute;inset:0;box-shadow:inset 6px 0 0 rgba(0,0,0,.18);pointer-events:none}
+</style>
+<script>
+(function(){
+  if(typeof render!=='function'||typeof lib==='undefined'||typeof sv==='undefined')return;
+  var ISBN=/^(97[89]\d{10}|\d{9}[\dXx])$/, tried=new Set();
+
+  async function getJSON(u){
+    var c=new AbortController(), t=setTimeout(function(){c.abort()},6000);
+    try{var r=await fetch(u,{signal:c.signal});if(!r.ok)return null;return await r.json()}
+    catch(e){return null}finally{clearTimeout(t)}
+  }
+
+  // Returns a cover URL, '' if no cover exists, or null if the network failed (try again later).
+  async function lookup(isbn){
+    var o=await getJSON('https://openlibrary.org/api/books?bibkeys=ISBN:'+isbn+'&format=json&jscmd=data');
+    if(o===null)return null;
+    var e=o['ISBN:'+isbn];
+    if(e&&e.cover){var u=e.cover.medium||e.cover.large||e.cover.small;if(u)return u}
+    var g=await getJSON('https://www.googleapis.com/books/v1/volumes?q=isbn:'+isbn+'&maxResults=1');
+    var l=g&&g.items&&g.items[0]&&g.items[0].volumeInfo&&g.items[0].volumeInfo.imageLinks;
+    if(l){var v=l.thumbnail||l.smallThumbnail;if(v)return v.replace('http://','https://').replace('&edge=curl','')}
+    return g===null?null:'';
+  }
+
+  function paint(){
+    document.querySelectorAll('.book').forEach(function(el){
+      var b=lib[+el.dataset.n], cov=el.querySelector('.cov');
+      if(!b||!b.cover||!cov||cov.querySelector('.ci'))return;
+      var img=new Image();
+      img.className='ci';img.alt='';img.draggable=false;
+      img.onload=function(){cov.classList.add('hascov')};
+      img.onerror=function(){img.remove()};
+      img.src=b.cover;
+      cov.appendChild(img);
+    });
+  }
+
+  function backfill(){
+    lib.forEach(function(b){
+      if(!b||b.cover!==undefined||!ISBN.test(b.i)||tried.has(b.i))return;
+      tried.add(b.i);
+      lookup(b.i).then(function(u){
+        if(u===null)return;
+        b.cover=u;sv('bm-lib',lib);render();
+      });
+    });
+  }
+
+  var _render=render;
+  render=function(){_render();paint();backfill()};
+  render();
+})();
+</script>
