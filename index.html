@@ -100,7 +100,7 @@ body.fl nav button.sc{background:var(--sb);color:var(--si);width:68px;height:68p
 <div class="sh" id="sh" hidden><div class="pn" id="pn"></div></div>
 <div class="toast" id="ts"></div>
 <script>
-const BM_V=10,UPD='https://raw.githubusercontent.com/fjking750/Bookmoth-/main/index.html';
+const BM_V=11,UPD='https://raw.githubusercontent.com/fjking750/Bookmoth-/main/index.html';
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const SAMPLES=[
 {i:'9780141439518',t:'Pride and Prejudice',a:'Jane Austen',x:'It is a truth universally acknowledged, that a single man in possession of a good fortune, must be in want of a wife.\n\nHowever little known the feelings or views of such a man may be on his first entering a neighbourhood, this truth is so well fixed in the minds of the surrounding families, that he is considered the rightful property of some one or other of their daughters.'},
@@ -332,4 +332,18 @@ checkUpdate();
     return '<div id="pv" data-i="'+b.i+'">Loading preview…</div><div id="pv-more" hidden>'+h+'</div>';
   };
 })();
+</script>
+<script>
+document.addEventListener('click',function(e){
+  var a=e.target.closest&&e.target.closest('a[target="_blank"]');
+  if(!a||!/^https?:/.test(a.href))return;
+  var Cap=window.Capacitor;
+  if(!Cap||(Cap.getPlatform&&Cap.getPlatform()==='web'))return;
+  var B=(Cap.Plugins&&Cap.Plugins.Browser)||(Cap.registerPlugin&&Cap.registerPlugin('Browser'));
+  if(!B||!B.open)return;
+  e.preventDefault();
+  var url=a.href;
+  function fallback(){window.open(url,'_blank')}
+  try{var p=B.open({url:url});if(p&&p.catch)p.catch(fallback)}catch(err){fallback()}
+},true);
 </script>
