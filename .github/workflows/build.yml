@@ -1,4 +1,4 @@
-name: Build APK
+name: Build APK 2
 on: workflow_dispatch
 
 jobs:
@@ -19,11 +19,15 @@ jobs:
       - name: Create the Android project
         run: |
           mkdir -p www
-          cp index.html www/index.html
+          cp index.html updater.js www/
+          sed -i 's#</body>#<script src="updater.js"></script></body>#' www/index.html
+          grep -q 'updater.js' www/index.html
           npm init -y
-          npm install @capacitor/core@7 @capacitor/cli@7 @capacitor/android@7
+          npm install @capacitor/core@7 @capacitor/cli@7 @capacitor/android@7 @capgo/capacitor-updater@7
           npx cap init Bookmoth com.bookmoth.app --web-dir www
+          node -e "const fs=require('fs'),f='capacitor.config.json',c=JSON.parse(fs.readFileSync(f));c.plugins={...c.plugins,CapacitorUpdater:{autoUpdate:false}};fs.writeFileSync(f,JSON.stringify(c,null,2))"
           npx cap add android
+          sed -i -E "s/versionCode [0-9]+/versionCode ${{ github.run_number }}/; s/versionName \"[^\"]*\"/versionName \"1.0.${{ github.run_number }}\"/" android/app/build.gradle
 
       - name: Add camera and location permissions
         run: |
