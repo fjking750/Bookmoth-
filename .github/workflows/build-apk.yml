@@ -18,10 +18,56 @@ jobs:
 
       - name: Create the Android project
         run: |
+          test -f index.html || { echo "::error::index.html is missing from the repo root"; exit 1; }
           mkdir -p www
-          cp index.html updater.js www/
-          sed -i 's#</body>#<script src="updater.js"></script></body>#' www/index.html
-          grep -q 'updater.js' www/index.html
+          cp index.html www/
+          cat > www/updater.js <<'UPDATER_EOF'
+          // Bookmoth auto-update.
+          (function () {
+            var REPO = 'fjking750/Bookmoth-';
+
+            async function run() {
+              var Cap = window.Capacitor;
+              if (!Cap || (Cap.getPlatform && Cap.getPlatform() === 'web')) return;
+
+              var U = (Cap.Plugins && Cap.Plugins.CapacitorUpdater) ||
+                      (Cap.registerPlugin && Cap.registerPlugin('CapacitorUpdater'));
+              if (!U) return;
+
+              try {
+                await U.notifyAppReady();
+
+                var res = await fetch('https://api.github.com/repos/' + REPO + '/releases/latest');
+                if (!res.ok) return;
+                var rel = await res.json();
+
+                var latest = parseInt(String(rel.tag_name).replace(/^v/, ''), 10);
+                var asset = (rel.assets || []).find(function (a) { return a.name === 'www.zip'; });
+                if (!latest || !asset) return;
+
+                var current = await U.current();
+                var have = parseInt(current.bundle.version, 10) || 0;
+                if (latest <= have) return;
+
+                var bundle = await U.download({
+                  url: asset.browser_download_url,
+                  version: String(latest)
+                });
+                await U.set({ id: bundle.id });
+              } catch (e) {
+                console.warn('Update check failed:', e);
+              }
+            }
+
+            if (document.readyState === 'complete') run();
+            else window.addEventListener('load', run);
+          })();
+          UPDATER_EOF
+          if grep -qi '</body>' www/index.html; then
+            sed -i 's#</body>#<script src="updater.js"></script></body>#I' www/index.html
+          else
+            echo '<script src="updater.js"></script>' >> www/index.html
+          fi
           npm init -y
           npm install @capacitor/core@7 @capacitor/cli@7 @capacitor/android@7 @capgo/capacitor-updater@7
           npx cap init Bookmoth com.bookmoth.app --web-dir www
