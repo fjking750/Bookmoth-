@@ -69,7 +69,7 @@ jobs:
             echo '<script src="updater.js"></script>' >> www/index.html
           fi
           npm init -y
-          npm install @capacitor/core@7 @capacitor/cli@7 @capacitor/android@7 @capgo/capacitor-updater@7
+          npm install @capacitor/core@7 @capacitor/cli@7 @capacitor/android@7 @capgo/capacitor-updater@7 @capacitor/browser@7
           npx cap init Bookmoth com.bookmoth.app --web-dir www
           node -e "const fs=require('fs'),f='capacitor.config.json',c=JSON.parse(fs.readFileSync(f));c.plugins={...c.plugins,CapacitorUpdater:{autoUpdate:false}};fs.writeFileSync(f,JSON.stringify(c,null,2))"
           npx cap add android
