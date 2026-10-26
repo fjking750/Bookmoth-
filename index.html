@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#101426">
 <title>Bookmoth</title>
-<script>try{var BV=6,s=localStorage.getItem('bm-html'),t=+localStorage.getItem('bm-try')||0;if(s&&!window.__bm){var m=s.match(/const BM_V=(\d+)/),v=m?+m[1]:0;if(t>=2){localStorage.removeItem('bm-html');localStorage.setItem('bm-try','0')}else if(v>BV){window.__bm=1;localStorage.setItem('bm-try',String(t+1));document.open();document.write(s);document.close()}}}catch(e){}</script>
+<script>try{var BV=8,s=localStorage.getItem('bm-html'),t=+localStorage.getItem('bm-try')||0;if(s&&!window.__bm){var m=s.match(/const BM_V=(\d+)/),v=m?+m[1]:0;if(t>=2){localStorage.removeItem('bm-html');localStorage.setItem('bm-try','0')}else if(v>BV){window.__bm=1;localStorage.setItem('bm-try',String(t+1));document.open();document.write(s);document.close()}}}catch(e){}</script>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700&family=Newsreader:ital,wght@0,400;0,500;1,400&display=swap">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jsQR/1.4.0/jsQR.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
@@ -255,5 +255,18 @@ checkUpdate();
   var _render=render;
   render=function(){_render();paint();backfill()};
   render();
+})();
+</script>
+<script>
+(function(){
+  function dedupe(){
+    ['header','main','nav','#rd','#sh','#ts','#ub'].forEach(function(sel){
+      var all=document.querySelectorAll(sel);
+      for(var i=1;i<all.length;i++)all[i].remove();
+    });
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',dedupe);
+  else dedupe();
+  window.addEventListener('load',dedupe);
 })();
 </script>
