@@ -100,7 +100,7 @@ body.fl nav button.sc{background:var(--sb);color:var(--si);width:68px;height:68p
 <div class="sh" id="sh" hidden><div class="pn" id="pn"></div></div>
 <div class="toast" id="ts"></div>
 <script>
-const BM_V=9,UPD='https://raw.githubusercontent.com/fjking750/Bookmoth-/main/index.html';
+const BM_V=10,UPD='https://raw.githubusercontent.com/fjking750/Bookmoth-/main/index.html';
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const SAMPLES=[
 {i:'9780141439518',t:'Pride and Prejudice',a:'Jane Austen',x:'It is a truth universally acknowledged, that a single man in possession of a good fortune, must be in want of a wife.\n\nHowever little known the feelings or views of such a man may be on his first entering a neighbourhood, this truth is so well fixed in the minds of the surrounding families, that he is considered the rightful property of some one or other of their daughters.'},
@@ -279,6 +279,57 @@ checkUpdate();
     if(b.f)return h;
     var name=String(b.t||'').replace(/,?\s*(vol\.?|volume)\s*\d+.*$/i,'').trim();
     return h+'<div class="row"><a class="btn" target="_blank" rel="noopener" href="https://www.viz.com/search?search='+encodeURIComponent(name)+'">Read on VIZ</a></div>';
+  };
+})();
+</script>
+<style>
+#pv{min-height:48px;color:var(--mu);font:15px/1.4 system-ui,sans-serif}
+#pv.live{height:calc(100vh - 150px);min-height:420px;color:inherit}
+</style>
+<script>
+(function(){
+  if(typeof emptyHtml!=='function')return;
+  var ISBN=/^(97[89]\d{10}|\d{9}[\dXx])$/, _e=emptyHtml;
+
+  async function canPreview(isbn){
+    try{
+      var c=new AbortController(), t=setTimeout(function(){c.abort()},6000);
+      var r=await fetch('https://www.googleapis.com/books/v1/volumes?q=isbn:'+isbn+'&maxResults=1',{signal:c.signal});
+      clearTimeout(t);
+      if(!r.ok)return false;
+      var j=await r.json(), it=j.items&&j.items[0];
+      var a=it&&it.accessInfo;
+      return !!(a&&a.embeddable&&a.viewability!=='NO_PAGES');
+    }catch(e){return false}
+  }
+
+  function loadGB(cb){
+    if(window.google&&google.books&&google.books.DefaultViewer){cb();return}
+    var s=document.createElement('script');
+    s.src='https://www.google.com/books/jsapi.js';
+    s.onload=function(){google.books.load();google.books.setOnLoadCallback(function(){cb()})};
+    s.onerror=function(){cb('err')};
+    document.head.appendChild(s);
+  }
+
+  async function show(isbn){
+    var box=document.getElementById('pv'), more=document.getElementById('pv-more');
+    if(!box||box.dataset.i!==isbn)return;
+    function none(msg){box.className='';box.textContent=msg;if(more)more.hidden=false}
+    if(!(await canPreview(isbn))){none('No free preview is available for this book.');return}
+    loadGB(function(err){
+      if(err||!window.google||!google.books){none('Couldn’t load the preview. Check your internet.');return}
+      box.textContent='';box.className='live';
+      var v=new google.books.DefaultViewer(box);
+      v.load('ISBN:'+isbn,function(){none('No free preview is available for this book.')});
+    });
+  }
+
+  emptyHtml=function(b){
+    var h=_e(b);
+    if(b.f||!ISBN.test(b.i))return h;
+    setTimeout(function(){show(b.i)},60);
+    return '<div id="pv" data-i="'+b.i+'">Loading preview…</div><div id="pv-more" hidden>'+h+'</div>';
   };
 })();
 </script>
