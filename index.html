@@ -100,7 +100,7 @@ body.fl nav button.sc{background:var(--sb);color:var(--si);width:68px;height:68p
 <div class="sh" id="sh" hidden><div class="pn" id="pn"></div></div>
 <div class="toast" id="ts"></div>
 <script>
-const BM_V=13,UPD='https://raw.githubusercontent.com/fjking750/Bookmoth-/main/index.html';
+const BM_V=14,UPD='https://raw.githubusercontent.com/fjking750/Bookmoth-/main/index.html';
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const SAMPLES=[
 {i:'9780141439518',t:'Pride and Prejudice',a:'Jane Austen',x:'It is a truth universally acknowledged, that a single man in possession of a good fortune, must be in want of a wife.\n\nHowever little known the feelings or views of such a man may be on his first entering a neighbourhood, this truth is so well fixed in the minds of the surrounding families, that he is considered the rightful property of some one or other of their daughters.'},
@@ -430,5 +430,41 @@ document.addEventListener('click',function(e){
   var cfg={childList:true,characterData:true,subtree:true};
   if(go)new MutationObserver(fix).observe(go,cfg);
   if(cm)new MutationObserver(fix).observe(cm,cfg);
+})();
+</script>
+<script>
+(function(){
+  // 1) Tapping a book opens the reader again instead of VIZ.
+  window.addEventListener('click',function(e){
+    var el=e.target.closest&&e.target.closest('.book');
+    if(!el)return;
+    var o=el.dataset.n;
+    el.dataset.n='-1';
+    setTimeout(function(){el.dataset.n=o},0);
+  },true);
+
+  // 2) Remove the "Read on VIZ" button and add free-copy search buttons.
+  if(typeof emptyHtml==='function'){
+    var _e=emptyHtml;
+    emptyHtml=function(b){
+      var h=_e(b);
+      if(b.f)return h;
+      h=h.replace(/<div class="row"><a class="btn"[^>]*viz\.com[^>]*>Read on VIZ<\/a><\/div>/g,'');
+      var q=encodeURIComponent(String(b.t||'').replace(/,?\s*(vol\.?|volume)\s*\d+.*$/i,'').trim());
+      function a(u,l){return '<a class="btn o" target="_blank" rel="noopener" href="'+u+'">'+l+'</a>'}
+      return h+'<p class="mu" style="font:15px/1.4 system-ui,sans-serif;margin-top:14px">Free full copies (older books in the public domain):</p><div class="row">'+a('https://www.gutenberg.org/ebooks/search/?query='+q,'Project Gutenberg')+a('https://standardebooks.org/ebooks?query='+q,'Standard Ebooks')+'</div>';
+    };
+  }
+
+  // 3) Remove "Set VIZ link" from the press-and-hold menu.
+  if(typeof menu==='function'){
+    var _m=menu;
+    menu=function(n,m){
+      _m(n,m);
+      document.querySelectorAll('#pn .mi').forEach(function(x){
+        if(/VIZ link/i.test(x.textContent))x.remove();
+      });
+    };
+  }
 })();
 </script>
